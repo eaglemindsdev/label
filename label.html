@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Label Preview and Print</title>
+    <link rel="stylesheet" href="./assets/bootstrap.min.css">
+    <style type="text/css">
+        .label_border {
+            border: 0.1px dotted grey !important;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+
+        .label {
+            text-align: center;
+            justify-content: center;
+        }
+
+        .custom-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .custom-column {
+            margin: 0 2mm;
+        }
+
+        table.table-bordered>thead>tr>th {
+            text-align: center;
+        }
+        .center-table {
+            margin: 0 auto; /* This will center the table */
+        }
+
+        .table>tbody>tr>td,
+        .table>tbody>tr>th,
+        .table>tfoot>tr>td,
+        .table>tfoot>tr>th,
+        .table>thead>tr>td,
+        .table>thead>tr>th {
+            padding-left: 2px;
+            padding-right: 2px;
+        }
+    </style>
+</head>
+
+<body class="hold-transition skin-blue sidebar-mini">
+    <div class="wrapper">
+        <div class="content-wrapper">
+            <section class="content-header">
+               
+                <ol class="breadcrumb">
+                    <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+                    <li class="active">Add/Update Sales</li>
+                </ol>
+            </section>
+
+            <section class="content">
+                <div class="row">
+                    <div class="col-md-6">
+                        <form class="form-horizontal" id="labels-form" enctype="multipart/form-data" method="POST">
+                            <div class="box box-primary">
+                                <div class="box-body">
+                                    <div class="form-group">
+                                        <div class="col-md-8 col-md-offset-2">
+                                            <div class="input-group">
+                                                <span class="input-group-addon" title="Select Items"><i class="fa fa-barcode"></i></span>
+                                                <input type="text" class="form-control" placeholder="Item name/Barcode/Itemcode" id="item_search">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <table class="table table-hover table-bordered center-table" style="width:67%; margin-bottom: 10px;" id="sales_table">
+                                        <thead class="custom_thead">
+                                            <tr class="bg-primary">
+                                                <th style="width:45%">Item Name</th>
+                                                <th style="width:30%">Price</th>
+                                                <th style="width:45%">Quantity</th>
+                                                <th style="width:25%">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+
+                                    <div class="form-group">
+                                        <label for="columncount" class="col-sm-4 control-label">Column Count</label>
+                                        <div class="col-sm-6">
+                                            <input type="number" value="3" id="columncount" name="columncount" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="papperWidth" class="col-sm-4 control-label">Total Paper Width (mm)</label>
+                                        <div class="col-sm-6">
+                                            <input type="number" value="110" id="papperWidth" name="papperWidth" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="leftGap" class="col-sm-4 control-label">First Label Left Hand-Side Gap (mm)</label>
+                                        <div class="col-sm-6">
+                                            <input type="number" value="2" id="leftGap" name="leftGap" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="columngap" class="col-sm-4 control-label">Column Gap (mm)</label>
+                                        <div class="col-sm-6">
+                                            <input type="number" value="2" id="columngap" name="columngap" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="rightGap" class="col-sm-4 control-label">Last Label Right Hand-Side Gap (mm)</label>
+                                        <div class="col-sm-6">
+                                            <input type="number" value="2" id="rightGap" name="rightGap" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="labelHeight" class="col-sm-4 control-label">Label Height (mm)</label>
+                                        <div class="col-sm-6">
+                                            <input type="number" value="21" id="labelHeight" name="labelHeight" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="rowgap" class="col-sm-4 control-label">Row Gap (mm)</label>
+                                        <div class="col-sm-6">
+                                            <input type="number" value="3" id="rowgap" name="rowgap" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="box-footer">
+                                <div class="row">
+                                    <div class="col-md-3 col-md-offset-3">
+                                        <button type="button" id="preview" class="btn btn-success btn-block" title="Preview Labels">Preview</button>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <a href="#">
+                                            <button type="button" class="btn btn-warning btn-block" title="Go Dashboard">Close</button>
+                                        </a>
+                                    </div>
+                                     <div class="col-md-3">
+                                        <input type="button" class="btn btn-primary btn-block" id="print" value="Print">
+                                    </div>
+                                </div>
+                            </div>
+
+                           
+                        </form>
+                    </div>
+                    <div class="col-md-6">
+                                    <span id="preview_data" class="col-md-offset-1 col-sm-10" style="overflow: auto;"></span>                                   
+                              
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div class="control-sidebar-bg"></div>
+    </div>
+    <script src="./assets/jquery.min.js"></script>
+    <script src="./assets/bootstrap.min.js"></script>
+    
+    <script>
+        function final_total() {
+            var total_quantity = 0;
+            $("#sales_table tbody tr").each(function() {
+                var quantity = $(this).find("input.quantity").val();
+                if (quantity) {
+                    total_quantity += parseInt(quantity);
+                }
+            });
+            $(".total_quantity").html(total_quantity);
+        }
+
+        function removeRow(button) {
+            $(button).closest("tr").remove();
+            final_total();
+        }
+
+$("#preview").on("click", function() {
+    var column_count = parseInt($("#columncount").val());
+    var columngap = parseInt($("#columngap").val());
+    var rowgap = parseInt($("#rowgap").val());
+    var paper_width = parseInt($("#papperWidth").val());
+    var label_height = parseInt($("#labelHeight").val());
+    var left_gap = parseInt($("#leftGap").val());
+    var right_gap = parseInt($("#rightGap").val());
+
+    var label_width = Math.floor((paper_width - (columngap * (column_count - 1)) - left_gap - right_gap) / column_count);
+    var previewData = '<div style="display:block; margin-left: 0mm; margin-top: 0mm;">';
+    var column_item_count = 0;
+
+    $("#sales_table tbody tr").each(function() {
+        var item_name = $(this).find("input.item_name").val();
+        var item_count = parseInt($(this).find("input.quantity").val());
+        var price = parseInt($(this).find("input.price").val());
+
+        for (var j = 1; j <= item_count; j++) {
+            if (column_item_count % column_count === 0) {
+                if (column_item_count > 0) {
+                    previewData += '</div>';
+                }
+                previewData += '<div class="custom-row" style="margin-bottom: ' + rowgap + 'mm; display: flex;">';
+            }
+
+            previewData += '<div class="custom-column label_border" style="height: ' + label_height + 'mm; width: ' + label_width + 'mm; margin-right: ' + (column_item_count % column_count === column_count - 1 ? right_gap : columngap) + 'mm; margin-left: ' + (column_item_count % column_count === 0 ? left_gap : 0) + 'mm;">';
+            previewData += '<p style="font-size:12px; padding-top:1mm; font-weight:bold; text-align:center; margin: 0;" class="text-uppercase">Vaagai Organic</p>';
+            previewData += '<p style="font-size:10px; padding:1mm; text-align: center; margin: 0;">' + item_name + '</p>';
+            previewData += '<p style="margin:0mm; font-size:9px; text-align: center; padding:1mm;"><b>Price:</b> ₹'+price+'</p>';
+            // previewData += '<div style="margin: auto; text-align: center;"><img style="max-height: 8mm; width: 80%; margin: 0 auto; padding: 0.5mm;" src="https://via.placeholder.com/150"></div>';
+            previewData += '</div>';
+
+            column_item_count++;
+        }
+    });
+
+    if (column_item_count % column_count !== 0) {
+        previewData += '</div>';
+    }
+
+    previewData += '</div>';
+    $("#preview_data").html(previewData);
+});
+
+$("#print").on("click", function(event) {
+    PrintMe("preview_data");
+});
+
+
+
+          function PrintMe(DivID) {
+    var disp_setting = "toolbar=yes,location=no,";
+    disp_setting += "directories=yes,menubar=yes,";
+    disp_setting += "scrollbars=yes,width=800, height=300, top=0mm, bottom=0mm left: 0px right: 0px";
+    var content_value = document.getElementById(DivID).innerHTML;
+    var docprint = window.open("", "", disp_setting);
+    docprint.document.open();
+    docprint.document.write('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"');
+    docprint.document.write('"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">');
+    docprint.document.write('<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">');
+    docprint.document.write('<head><title>My Title</title>');
+    docprint.document.write('<style type="text/css">body{ margin:0px;');
+    docprint.document.write('font-family:verdana,Arial;color:#000;');
+    docprint.document.write('font-family:Verdana, Geneva, sans-serif; font-size:25px;');
+    docprint.document.write('a{color:#000;text-decoration:none;} </style>');
+    docprint.document.write('</head><body onLoad="self.print()">');
+    docprint.document.write(content_value);
+    docprint.document.write('</body></html>');
+    docprint.document.close();
+    docprint.focus();
+}
+
+        // Mock adding items to the table for demo purposes
+        $(document).ready(function() {
+            $("#item_search").on("keypress", function(e) {
+                if (e.which === 13) { // Enter key pressed
+                    var item_name = $(this).val();
+                    if (item_name) {
+                        var newRow = `<tr>
+                                        <td><input type="text" class="form-control item_name" value="${item_name}"></td>
+                                         <td><input type="number" class="form-control price" ></td>
+                                        <td><input type="number" class="form-control quantity" value="3"></td>
+                                        <td><button type="button" class="btn btn-danger btn-sm" onclick="removeRow(this)">Remove</button></td>
+                                      </tr>`;
+                        $("#sales_table tbody").append(newRow);
+                        final_total();
+                    }
+                    $(this).val('');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
