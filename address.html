@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Print Address Labels</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            
+            .label {
+                width: 5in; /* 5 inches width */
+                height: 3in; /* 3 inches height */
+                box-sizing: border-box;
+                border: 1px solid #ddd;
+                padding: 0.25in;
+                margin: 0;
+                page-break-inside: avoid;
+                position: relative;
+                overflow: hidden;
+            }
+            .w-full {
+                width: 100%;
+            }
+
+            .border-collapse {
+                border-collapse: collapse;
+            }
+
+            .mb-1 {
+                margin-bottom: 0.25rem; /* Adjust as needed */
+            }
+
+            .thin-border {
+                border: 1px solid #000; /* Adjust border as needed */
+            }
+
+            .text-lg {
+                font-size: 1.125rem; /* Adjust as needed */
+            }
+
+            .font-bold {
+                font-weight: bold;
+            }
+
+            .recipient-container, .sender-container {
+                padding: 10px; /* Adjust padding as needed */
+            }
+
+            .recipient-container h3, .recipient-container h5,
+            .sender-container h3, .sender-container h5,
+            .sender-container p {
+                margin: 0;
+                margin-bottom: 5px; /* Add a small bottom margin for spacing */
+            }
+
+            .toaddress {
+                margin-bottom: 10px; /* Add more spacing if necessary */
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="container mx-auto">
+        <div class="grid grid-cols-2 gap-4">
+            <div class="form-container p-4 bg-white border rounded shadow-md">
+                <h2 class="text-2xl font-bold mb-4">Enter Address Details</h2>
+                <form id="addressForm">
+                    <div id="addressFields">
+                        <div class="address-group mb-4 p-4 border rounded relative">
+                            <label for="toName" class="block text-sm font-medium text-gray-700">Name:</label>
+                            <input type="text" class="toName mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+                            
+                            <label for="toAddress" class="block text-sm font-medium text-gray-700 mt-4">Address:</label>
+                            <textarea class="toAddress mt-1 block w-full border-gray-300 rounded-md shadow-sm" rows="4" required></textarea>
+                            
+                            <label for="toPhone" class="block text-sm font-medium text-gray-700 mt-4">Phone:</label>
+                            <input type="text" class="toPhone mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+                            
+                            <button type="button" class="remove-button absolute top-2 right-2 bg-red-500 text-white py-1 px-3 rounded-md" onclick="removeAddressField(this)">Remove</button>
+                        </div>
+                    </div>
+                    <button type="button" class="bg-blue-500 text-white py-2 px-4 rounded-md shadow-md mt-4" onclick="addAddressField()">Add Another Address</button>
+                    <button type="button" class="bg-yellow-500 text-white py-2 px-4 rounded-md shadow-md mt-4" onclick="previewAddresses()">Preview Address</button>
+                    <button type="button" class="bg-green-500 text-white py-2 px-4 rounded-md shadow-md mt-4" onclick="printAddresses()">Print Address</button>
+                </form>
+            </div>
+            <div class="preview-container p-4 bg-white border rounded shadow-md">
+                <div id="addressPrintPreview"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function addAddressField() {
+            const addressFields = document.getElementById('addressFields');
+            const newField = document.createElement('div');
+            newField.classList.add('address-group', 'mb-4', 'p-4', 'border', 'rounded', 'relative');
+            newField.innerHTML = `
+                <label for="toName" class="block text-sm font-medium text-gray-700">Name:</label>
+                <input type="text" class="toName mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+                
+                <label for="toAddress" class="block text-sm font-medium text-gray-700 mt-4">Address:</label>
+                <textarea class="toAddress mt-1 block w-full border-gray-300 rounded-md shadow-sm" rows="4" required></textarea>
+                
+                <label for="toPhone" class="block text-sm font-medium text-gray-700 mt-4">Phone:</label>
+                <input type="text" class="toPhone mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+                
+                <button type="button" class="remove-button absolute top-2 right-2 bg-red-500 text-white py-1 px-3 rounded-md" onclick="removeAddressField(this)">Remove</button>
+            `;
+            addressFields.appendChild(newField);
+        }
+
+        function removeAddressField(button) {
+            const addressGroup = button.parentElement;
+            addressGroup.remove();
+        }
+
+        function previewAddresses() {
+            const names = document.querySelectorAll('.toName');
+            const addresses = document.querySelectorAll('.toAddress');
+            const phones = document.querySelectorAll('.toPhone');
+            let previewContent = '';
+
+            names.forEach((name, index) => {
+                const addressBlock = `
+                    <table class="w-full border-collapse mb-1 thin-border">
+                        <tr>
+                            <td></td>
+                            <td colspan="2">
+                                <h3 class="text-lg font-bold">To:</h3>
+                                <h5 class="font-bold name">${name.value}</h5>
+                                <p class="toaddress">${addresses[index].value.replace(/\n/g, '<br>')}</p>
+                                <h5 class="font-bold">Phone: ${phones[index].value}</h5>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h3 class="text-lg font-bold">From:</h3>
+                                <h5 class="font-bold">VAAGAI ORGANIC</h5>
+                                <p>No.253/4, Pattalamman Street, Adiyur,</p>
+                                <p>Tirupattur Tk & Dt - 635602.</p>
+                                <h5 class="font-bold">Cell: 8233823306, 9655008990</h5>
+                            </td>
+                        </tr>
+                    </table>
+                    <br>
+                `;
+                previewContent += addressBlock;
+            });
+
+            document.getElementById('addressPrintPreview').innerHTML = previewContent;
+        }
+
+        function printAddresses() {
+            const printContent = document.getElementById('addressPrintPreview').innerHTML;
+            const printWindow = window.open('', '', 'height=800,width=600');
+            printWindow.document.write('<html><head><title>Print Address</title>');
+            printWindow.document.write('<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">');
+            printWindow.document.write('<style>@media print { body { margin: 0; padding: 0; } .label { width: 5in; height: 3in; box-sizing: border-box; border: 1px solid #ddd; padding: 0.25in; margin: 0; page-break-inside: avoid; } .address-block { text-align: left; line-height: 1.2; } }</style>');
+            printWindow.document.write('</head><body>');
+            printWindow.document.write(printContent);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.focus();
+            printWindow.print();
+        }
+    </script>
+</body>
+</html>
