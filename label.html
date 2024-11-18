@@ -86,17 +86,27 @@
                                     </table>
 
                                     <div class="form-group">
-                                        <label for="columncount" class="col-sm-4 control-label">Column Count</label>
-                                        <div class="col-sm-6">
+                                        <label for="columncount" class="col-sm-3 control-label">Column Count</label>
+                                        <div class="col-sm-3">
                                             <input type="number" value="3" id="columncount" name="columncount" class="form-control">
                                         </div>
+                                        <label for="columngap" class="col-sm-3 control-label">Column Gap (mm)</label>
+                                        <div class="col-sm-3">
+                                            <input type="number" value="2" id="columngap" name="columngap" class="form-control">
+                                        </div>
+                                        
                                     </div>
                                     <div class="form-group">
-                                        <label for="papperWidth" class="col-sm-4 control-label">Total Paper Width (mm)</label>
-                                        <div class="col-sm-6">
-                                            <input type="number" value="110" id="papperWidth" name="papperWidth" class="form-control">
+                                        <label for="labelHeight" class="col-sm-3 control-label">Label Height (mm)</label>
+                                        <div class="col-sm-3">
+                                            <input type="number" value="21" id="labelHeight" name="labelHeight" class="form-control">
+                                        </div>
+                                        <label for="rowgap" class="col-sm-3 control-label">Row Gap (mm)</label>
+                                        <div class="col-sm-3">
+                                            <input type="number" value="3" id="rowgap" name="rowgap" class="form-control">
                                         </div>
                                     </div>
+                                    
                                     <div class="form-group">
                                         <label for="leftGap" class="col-sm-4 control-label">First Label Left Hand-Side Gap (mm)</label>
                                         <div class="col-sm-6">
@@ -104,10 +114,11 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="columngap" class="col-sm-4 control-label">Column Gap (mm)</label>
+                                        <label for="papperWidth" class="col-sm-4 control-label">Total Paper Width (mm)</label>
                                         <div class="col-sm-6">
-                                            <input type="number" value="2" id="columngap" name="columngap" class="form-control">
+                                            <input type="number" value="110" id="papperWidth" name="papperWidth" class="form-control">
                                         </div>
+                                        
                                     </div>
                                     <div class="form-group">
                                         <label for="rightGap" class="col-sm-4 control-label">Last Label Right Hand-Side Gap (mm)</label>
@@ -115,16 +126,39 @@
                                             <input type="number" value="2" id="rightGap" name="rightGap" class="form-control">
                                         </div>
                                     </div>
+                                    
+                                   
                                     <div class="form-group">
-                                        <label for="labelHeight" class="col-sm-4 control-label">Label Height (mm)</label>
+                                        <label for="price" class="col-sm-4 control-label">Price </label>
                                         <div class="col-sm-6">
-                                            <input type="number" value="21" id="labelHeight" name="labelHeight" class="form-control">
+                                            <input type="radio" value="1" id="price" name="price" checked>Yes
+                                            <input type="radio" value="0" id="price" name="price" >No
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="rowgap" class="col-sm-4 control-label">Row Gap (mm)</label>
+                                        <label for="title" class="col-sm-4 control-label">Title</label>
                                         <div class="col-sm-6">
-                                            <input type="number" value="3" id="rowgap" name="rowgap" class="form-control">
+                                            <input type="text"  id="title" value="100% Natural Soap" name="title" class="form-control">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="meDate" class="col-sm-4 control-label">MF D/EXP D </label>
+                                        <div class="col-sm-6">
+                                            <input type="radio" value="1" id="meDate" name="meDate" >Yes
+                                            <input type="radio" value="0" id="meDate" name="meDate" checked>No
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="mDate" class="col-sm-4 control-label">MF Date</label>
+                                        <div class="col-sm-6">
+                                            <input type="text"  id="mDate" name="mDate" class="form-control" placeholder="mm/YY">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="eDate" class="col-sm-4 control-label">Exp Date</label>
+                                        <div class="col-sm-6">
+                                            <input type="text"  id="eDate"  name="eDate" class="form-control" placeholder="mm/YY">
                                         </div>
                                     </div>
                                 </div>
@@ -188,11 +222,25 @@ $("#preview").on("click", function() {
     var left_gap = parseInt($("#leftGap").val());
     var right_gap = parseInt($("#rightGap").val());
 
+    var title = $("#title").val();
+
+    var is_price = parseInt($("input[name='price']:checked").val());
+    var eDate = $("#eDate").val();
+    var mDate = $("#mDate").val();
+
+    var is_meDate = parseInt($("input[name='meDate']:checked").val());
+
+
+
     var label_width = Math.floor((paper_width - (columngap * (column_count - 1)) - left_gap - right_gap) / column_count);
     var previewData = '<div style="display:block; margin-left: 0mm; margin-top: 0mm;">';
     var column_item_count = 0;
 
+    var marginTopValue = (is_price === 0) ? 'margin-top:10px' : 'margin:0px';
+
     $("#sales_table tbody tr").each(function() {
+
+        
         var item_name = $(this).find("input.item_name").val();
         var item_count = parseInt($(this).find("input.quantity").val());
         var price = parseInt($(this).find("input.price").val());
@@ -206,9 +254,14 @@ $("#preview").on("click", function() {
             }
 
             previewData += '<div class="custom-column label_border" style="height: ' + label_height + 'mm; width: ' + label_width + 'mm; margin-right: ' + (column_item_count % column_count === column_count - 1 ? right_gap : columngap) + 'mm; margin-left: ' + (column_item_count % column_count === 0 ? left_gap : 0) + 'mm;">';
-            previewData += '<p style="font-size:12px; padding-top:1mm; font-weight:bold; text-align:center; margin: 0;" class="text-uppercase">Vaagai Organic</p>';
-            previewData += '<p style="font-size:10px; padding:1mm; text-align: center; margin: 0;">' + item_name + '</p>';
+            previewData += '<p style="font-size:10px; padding-top:1mm; text-align:center; ' + marginTopValue + ';" >'+title+'</p>';
+            previewData += '<p style="font-size:10px; padding:1mm; font-weight:bold; text-align: center; margin: 0;">' + item_name + '</p>';
+            if(is_price == 1){
             previewData += '<p style="margin:0mm; font-size:9px; text-align: center; padding:1mm;"><b>Price:</b> ₹'+price+'</p>';
+            }
+            if (is_meDate == 1) {
+    previewData += '<p style="margin:-1mm; font-size:8px; text-align: center; padding:1mm;">Mf D:&nbsp;' + mDate + '&nbsp;&nbsp;Exp D:&nbsp;' + eDate + '</p>';
+}
             // previewData += '<div style="margin: auto; text-align: center;"><img style="max-height: 8mm; width: 80%; margin: 0 auto; padding: 0.5mm;" src="https://via.placeholder.com/150"></div>';
             previewData += '</div>';
 
